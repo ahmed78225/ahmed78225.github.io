@@ -9,44 +9,59 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #0f172a;
+    background: #0b1220;
     color: white;
+}
+
+/* شريط التنقل */
+nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background: #111827;
+    position: sticky;
+    top: 0;
+}
+
+nav a {
+    color: white;
+    margin: 0 10px;
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: #00c6ff;
 }
 
 /* الهيدر */
 header {
-    background: linear-gradient(90deg, #00c6ff, #0072ff);
-    padding: 60px 20px;
     text-align: center;
+    padding: 80px 20px;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
 }
 
 header h1 {
+    font-size: 42px;
     margin: 0;
-    font-size: 40px;
-}
-
-header p {
-    margin-top: 10px;
-    opacity: 0.9;
 }
 
 /* الأقسام */
 section {
-    padding: 50px 20px;
+    padding: 60px 20px;
     text-align: center;
 }
 
 .card {
     background: #1e293b;
+    max-width: 500px;
     margin: 15px auto;
     padding: 20px;
-    max-width: 500px;
     border-radius: 15px;
     transition: 0.3s;
 }
 
 .card:hover {
-    transform: scale(1.05);
+    transform: translateY(-5px);
     background: #334155;
 }
 
@@ -54,7 +69,7 @@ section {
 .btn {
     display: inline-block;
     margin-top: 15px;
-    padding: 10px 20px;
+    padding: 12px 25px;
     background: #00c6ff;
     color: black;
     border-radius: 25px;
@@ -66,11 +81,25 @@ section {
     background: #00ffcc;
 }
 
+/* زر واتساب عائم */
+.whatsapp {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #25D366;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
 /* الفوتر */
 footer {
+    background: #111827;
     text-align: center;
     padding: 20px;
-    background: #111827;
     margin-top: 20px;
 }
 </style>
@@ -79,41 +108,54 @@ footer {
 
 <body>
 
+<nav>
+    <div>🔥 أحمد</div>
+    <div>
+        <a href="#about">عنّي</a>
+        <a href="#projects">مشاريعي</a>
+        <a href="#contact">تواصل</a>
+    </div>
+</nav>
+
 <header>
-    <h1>🔥 أهلاً أنا أحمد</h1>
-    <p>مطور مواقع مبتدئ | أحب التقنية والألعاب</p>
+    <h1>🔥 مرحبا، أنا أحمد</h1>
+    <p>مطور مواقع مبتدئ | أتعلم البرمجة خطوة بخطوة</p>
 </header>
 
-<section>
+<section id="about">
     <h2>عنّي</h2>
     <div class="card">
-        <p>أنا شخص مهتم بتطوير المواقع وأتعلم البرمجة خطوة بخطوة 🚀</p>
+        أنا مهتم بتطوير المواقع وأتعلم التقنية 🚀
     </div>
 </section>
 
-<section>
+<section id="projects">
     <h2>مشاريعي</h2>
 
     <div class="card">
         <h3>موقعي الأول</h3>
-        <p>موقع بسيط تم تطويره باستخدام HTML و CSS</p>
+        <p>تم تطويره باستخدام HTML و CSS</p>
     </div>
 
     <div class="card">
-        <h3>مشروع قادم</h3>
-        <p>سيتم إضافة مشاريع جديدة قريبًا 🔥</p>
+        <h3>مشروع جديد</h3>
+        <p>سيتم إضافة مشاريع أقوى قريبًا 🔥</p>
     </div>
 </section>
 
-<section>
+<section id="contact">
     <h2>تواصل معي</h2>
 
     <a class="btn" href="https://github.com">GitHub</a>
-    <a class="btn" href="#">واتساب</a>
 </section>
 
+<!-- زر واتساب -->
+<a class="whatsapp" href="https://wa.me/967782253448?text=مرحبا%20أريد%20التواصل%20معك">
+💬 واتساب
+</a>
+
 <footer>
-    <p>© 2026 جميع الحقوق محفوظة - موقع أحمد</p>
+    © 2026 موقع أحمد - جميع الحقوق محفوظة
 </footer>
 
 </body>
