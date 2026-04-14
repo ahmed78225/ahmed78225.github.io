@@ -1,13 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar">
 <head>
-<title>موقعي</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>موقع أحمد الشخصي</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: white;
+}
+
+/* الهيدر */
+header {
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    padding: 60px 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 40px;
+}
+
+header p {
+    margin-top: 10px;
+    opacity: 0.9;
+}
+
+/* الأقسام */
+section {
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.card {
+    background: #1e293b;
+    margin: 15px auto;
+    padding: 20px;
+    max-width: 500px;
+    border-radius: 15px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    background: #334155;
+}
+
+/* الأزرار */
+.btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #00c6ff;
+    color: black;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn:hover {
+    background: #00ffcc;
+}
+
+/* الفوتر */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #111827;
+    margin-top: 20px;
+}
+</style>
+
 </head>
 
-<body style="text-align:center; font-family:sans-serif;">
-<h1>🔥 مرحبا بك في موقعي 🔥</h1>
+<body>
 
-<p>هذا أول موقع لي باستخدام GitHub Pages</p>
+<header>
+    <h1>🔥 أهلاً أنا أحمد</h1>
+    <p>مطور مواقع مبتدئ | أحب التقنية والألعاب</p>
+</header>
+
+<section>
+    <h2>عنّي</h2>
+    <div class="card">
+        <p>أنا شخص مهتم بتطوير المواقع وأتعلم البرمجة خطوة بخطوة 🚀</p>
+    </div>
+</section>
+
+<section>
+    <h2>مشاريعي</h2>
+
+    <div class="card">
+        <h3>موقعي الأول</h3>
+        <p>موقع بسيط تم تطويره باستخدام HTML و CSS</p>
+    </div>
+
+    <div class="card">
+        <h3>مشروع قادم</h3>
+        <p>سيتم إضافة مشاريع جديدة قريبًا 🔥</p>
+    </div>
+</section>
+
+<section>
+    <h2>تواصل معي</h2>
+
+    <a class="btn" href="https://github.com">GitHub</a>
+    <a class="btn" href="#">واتساب</a>
+</section>
+
+<footer>
+    <p>© 2026 جميع الحقوق محفوظة - موقع أحمد</p>
+</footer>
 
 </body>
 </html>
