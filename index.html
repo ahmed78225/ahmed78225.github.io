@@ -2,23 +2,92 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>ملفاتي</title>
+<title>VIP Drive</title>
+
 <style>
-body { font-family: sans-serif; padding: 20px; background:#f5f5f5; }
-.card { background:#fff; padding:15px; margin-top:10px; border-radius:10px; }
-button { padding:10px; margin-top:10px; cursor:pointer; }
-a { display:block; margin-top:8px; }
+body {
+  font-family: sans-serif;
+  background: linear-gradient(135deg,#111,#333);
+  color: white;
+  text-align: center;
+  padding: 40px;
+}
+
+.card {
+  background: #222;
+  padding: 15px;
+  margin: 10px auto;
+  width: 90%;
+  max-width: 450px;
+  border-radius: 12px;
+  text-align: right;
+}
+
+button {
+  padding: 10px 15px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.startBtn {
+  background: #00c853;
+  color: white;
+  font-size: 18px;
+}
+
+.fileBtn {
+  background: #2962ff;
+  color: white;
+}
+
+#uploadBox {
+  display: none;
+  margin-top: 20px;
+}
+textarea, input {
+  width: 90%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 8px;
+}
 </style>
 </head>
+
 <body>
 
-<h2>📁 رفع وإدارة الملفات</h2>
+<h1>📁 VIP DRIVE</h1>
 
-<input type="file" id="file">
-<button onclick="uploadFile()">رفع الملف</button>
+<!-- البداية -->
+<div id="home">
+  <button class="startBtn" onclick="openApp()">🚀 ابدأ</button>
+</div>
 
-<h3>📂 الملفات</h3>
+<!-- التطبيق -->
+<div id="app" style="display:none;">
+
+<h2>📂 الملفات</h2>
+
+<!-- كود سري -->
+<input type="password" id="secret" placeholder="كلمة السر">
+<button onclick="check()">دخول الرفع</button>
+
+<!-- رفع -->
+<div id="uploadBox">
+
+  <input type="file" id="file">
+
+  <textarea id="desc" placeholder="اكتب وصف الملف (سطر أو سطرين)"></textarea>
+
+  <button onclick="uploadFile()">رفع الملف</button>
+
+</div>
+
+<!-- عرض الملفات -->
 <div id="list"></div>
+
+</div>
 
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
@@ -28,9 +97,30 @@ const supabaseKey = "sb_publishable_QFwdX1L2pneeEFEqXNpbRw_9vJ71a1e";
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// رفع ملف
+// فتح التطبيق
+window.openApp = function () {
+  document.getElementById("home").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  loadFiles();
+};
+
+// كود سري
+window.check = function () {
+  const code = document.getElementById("secret").value;
+
+  if (code === "12345") {
+    document.getElementById("uploadBox").style.display = "block";
+    alert("تم السماح بالرفع 🔓");
+  } else {
+    alert("كلمة سر خطأ ❌");
+  }
+};
+
+// رفع ملف مع وصف
 window.uploadFile = async function () {
   const file = document.getElementById("file").files[0];
+  const desc = document.getElementById("desc").value;
+
   if (!file) return alert("اختر ملف");
 
   const fileName = Date.now() + "_" + file.name;
@@ -41,31 +131,44 @@ window.uploadFile = async function () {
 
   if (error) return alert("فشل الرفع");
 
+  // نحفظ الوصف داخل اسم الملف (حل بسيط بدون DB)
+  localStorage.setItem(fileName, desc);
+
   loadFiles();
 };
 
-// تحميل الملفات
+// عرض الملفات
 async function loadFiles() {
   const { data } = await supabase.storage.from("files").list();
 
-  document.getElementById("list").innerHTML = "";
+  const list = document.getElementById("list");
+  list.innerHTML = "";
 
   data.forEach(file => {
-    const url = supabase.storage.from("files").getPublicUrl(file.name).data.publicUrl;
+
+    const url = supabase.storage.from("files")
+      .getPublicUrl(file.name).data.publicUrl;
+
+    const type = file.name.split('.').pop();
+    const desc = localStorage.getItem(file.name) || "بدون وصف";
 
     const div = document.createElement("div");
     div.className = "card";
 
     div.innerHTML = `
       📄 ${file.name}<br>
-      <a href="${url}" download>⬇ تحميل</a>
+      🧩 النوع: ${type}<br>
+      📝 ${desc}<br>
+
+      <a href="${url}" download="${file.name}">
+        <button class="fileBtn">🚀 ابدأ التحميل</button>
+      </a>
     `;
 
-    document.getElementById("list").appendChild(div);
+    list.appendChild(div);
   });
 }
 
-loadFiles();
 </script>
 
 </body>
