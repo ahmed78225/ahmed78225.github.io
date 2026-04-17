@@ -1,59 +1,71 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>رفع ملفات</title>
+<meta charset="UTF-8">
+<title>ملفاتي</title>
+<style>
+body { font-family: sans-serif; padding: 20px; background:#f5f5f5; }
+.card { background:#fff; padding:15px; margin-top:10px; border-radius:10px; }
+button { padding:10px; margin-top:10px; cursor:pointer; }
+a { display:block; margin-top:8px; }
+</style>
 </head>
 <body>
 
-<h2>رفع ملفات إلى Supabase</h2>
+<h2>📁 رفع وإدارة الملفات</h2>
 
 <input type="file" id="file">
 <button onclick="uploadFile()">رفع الملف</button>
 
+<h3>📂 الملفات</h3>
 <div id="list"></div>
 
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-// 🔥 بياناتك (مركبة جاهزة)
 const supabaseUrl = "https://mvfydfodqyvfdzzapckf.supabase.co";
 const supabaseKey = "sb_publishable_QFwdX1L2pneeEFEqXNpbRw_9vJ71a1e";
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// رفع ملف
 window.uploadFile = async function () {
   const file = document.getElementById("file").files[0];
-  if (!file) return alert("اختر ملف أولاً");
+  if (!file) return alert("اختر ملف");
 
   const fileName = Date.now() + "_" + file.name;
 
-  // رفع الملف
-  const { data, error } = await supabase
-    .storage
+  const { error } = await supabase.storage
     .from("files")
     .upload(fileName, file);
 
-  if (error) {
-    alert("فشل الرفع ❌");
-    console.log(error);
-    return;
-  }
+  if (error) return alert("فشل الرفع");
 
-  // رابط عام
-  const { data: urlData } = supabase
-    .storage
-    .from("files")
-    .getPublicUrl(fileName);
-
-  const link = document.createElement("a");
-  link.href = urlData.publicUrl;
-  link.target = "_blank";
-  link.textContent = "⬇ تحميل: " + file.name;
-
-  document.getElementById("list").appendChild(link);
-  document.getElementById("list").appendChild(document.createElement("br"));
+  loadFiles();
 };
+
+// تحميل الملفات
+async function loadFiles() {
+  const { data } = await supabase.storage.from("files").list();
+
+  document.getElementById("list").innerHTML = "";
+
+  data.forEach(file => {
+    const url = supabase.storage.from("files").getPublicUrl(file.name).data.publicUrl;
+
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      📄 ${file.name}<br>
+      <a href="${url}" download>⬇ تحميل</a>
+    `;
+
+    document.getElementById("list").appendChild(div);
+  });
+}
+
+loadFiles();
 </script>
 
 </body>
