@@ -1,162 +1,172 @@
-<!DOCTYPE html>
-<html lang="ar">
+<!DOCTYPE html><html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>موقع أحمد الشخصي</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>موقعي الاحترافي</title>  <!-- خط عربي أوضح وأجمل -->  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Tajawal', sans-serif;
+    }
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0b1220;
-    color: white;
-}
+    body{
+      background:#0b1220;
+      color:#fff;
+      line-height:1.8;
+      text-align:right;
+    }
 
-/* شريط التنقل */
-nav {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 30px;
-    background: #111827;
-    position: sticky;
-    top: 0;
-}
+    nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:20px 40px;
+      background:rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      position:sticky;
+      top:0;
+      z-index:1000;
+    }
 
-nav a {
-    color: white;
-    margin: 0 10px;
-    text-decoration: none;
-}
+    nav h1{
+      font-size:20px;
+      color:#38bdf8;
+    }
 
-nav a:hover {
-    color: #00c6ff;
-}
+    nav a{
+      color:#fff;
+      margin:0 10px;
+      text-decoration:none;
+      opacity:0.8;
+      font-size:15px;
+    }
 
-/* الهيدر */
-header {
-    text-align: center;
-    padding: 80px 20px;
-    background: linear-gradient(90deg, #00c6ff, #0072ff);
-}
+    nav a:hover{
+      opacity:1;
+      color:#38bdf8;
+    }
 
-header h1 {
-    font-size: 42px;
-    margin: 0;
-}
+    .hero{
+      height:90vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      background: radial-gradient(circle at top, #1e3a8a, #0b1220);
+      padding:20px;
+    }
 
-/* الأقسام */
-section {
-    padding: 60px 20px;
-    text-align: center;
-}
+    .hero h2{
+      font-size:52px;
+      margin-bottom:10px;
+    }
 
-.card {
-    background: #1e293b;
-    max-width: 500px;
-    margin: 15px auto;
-    padding: 20px;
-    border-radius: 15px;
-    transition: 0.3s;
-}
+    .hero p{
+      opacity:0.85;
+      font-size:18px;
+      max-width:600px;
+    }
 
-.card:hover {
-    transform: translateY(-5px);
-    background: #334155;
-}
+    .btn{
+      margin-top:20px;
+      padding:12px 25px;
+      background:#38bdf8;
+      color:#000;
+      border-radius:10px;
+      text-decoration:none;
+      font-weight:bold;
+      transition:0.3s;
+    }
 
-/* الأزرار */
-.btn {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 12px 25px;
-    background: #00c6ff;
-    color: black;
-    border-radius: 25px;
-    text-decoration: none;
-    font-weight: bold;
-}
+    .btn:hover{
+      transform:scale(1.05);
+      background:#0ea5e9;
+    }
 
-.btn:hover {
-    background: #00ffcc;
-}
+    section{
+      padding:70px 20px;
+      text-align:center;
+    }
 
-/* زر واتساب عائم */
-.whatsapp {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #25D366;
-    color: white;
-    padding: 15px 20px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
+    .title{
+      font-size:32px;
+      margin-bottom:25px;
+      color:#38bdf8;
+    }
 
-/* الفوتر */
-footer {
-    background: #111827;
-    text-align: center;
-    padding: 20px;
-    margin-top: 20px;
-}
-</style>
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:20px;
+      max-width:1000px;
+      margin:auto;
+    }
 
-</head>
+    .card{
+      background:rgba(255,255,255,0.05);
+      padding:25px;
+      border-radius:15px;
+      transition:0.3s;
+      font-size:16px;
+    }
 
-<body>
+    .card:hover{
+      transform:translateY(-5px);
+      background:rgba(56,189,248,0.12);
+    }
 
-<nav>
-    <div>🔥 أحمد</div>
-    <div>
-        <a href="#about">عنّي</a>
-        <a href="#projects">مشاريعي</a>
-        <a href="#contact">تواصل</a>
-    </div>
-</nav>
-
-<header>
-    <h1>🔥 مرحبا، أنا أحمد</h1>
-    <p>مطور مواقع مبتدئ | أتعلم البرمجة خطوة بخطوة</p>
-</header>
-
-<section id="about">
-    <h2>عنّي</h2>
+    footer{
+      text-align:center;
+      padding:20px;
+      background:#050814;
+      font-size:14px;
+      opacity:0.7;
+    }
+  </style></head>
+<body><nav>
+  <h1>موقعي</h1>
+  <div>
+    <a href="#home">الرئيسية</a>
+    <a href="#about">عنّي</a>
+    <a href="#projects">مشاريعي</a>
+    <a href="#contact">تواصل</a>
+  </div>
+</nav><div class="hero" id="home">
+  <h2>مرحباً 👋</h2>
+  <p>موقع احترافي بتصميم حديث وخط عربي واضح وجميل مناسب للعرض على GitHub Pages</p>
+  <a class="btn" href="#projects">ابدأ الآن</a>
+</div><section id="about">
+  <div class="title">عنّي</div>
+  <p style="max-width:700px;margin:auto;opacity:0.85;">
+    هنا تكتب نبذة عن نفسك بطريقة احترافية، مثل مهاراتك في البرمجة أو التصميم أو أي شيء تقدمه.
+  </p>
+</section><section id="projects">
+  <div class="title">أعمالي</div>
+  <div class="grid">
     <div class="card">
-        أنا مهتم بتطوير المواقع وأتعلم التقنية 🚀
+      <h3>مشروع 1</h3>
+      <p>وصف المشروع بشكل جميل وواضح.</p>
     </div>
-</section>
-
-<section id="projects">
-    <h2>مشاريعي</h2>
-
     <div class="card">
-        <h3>موقعي الأول</h3>
-        <p>تم تطويره باستخدام HTML و CSS</p>
+      <h3>مشروع 2</h3>
+      <p>وصف المشروع بشكل جميل وواضح.</p>
     </div>
-
     <div class="card">
-        <h3>مشروع جديد</h3>
-        <p>سيتم إضافة مشاريع أقوى قريبًا 🔥</p>
+      <h3>مشروع 3</h3>
+      <p>وصف المشروع بشكل جميل وواضح.</p>
     </div>
-</section>
-
-<section id="contact">
-    <h2>تواصل معي</h2>
-
-    <a class="btn" href="https://github.com">GitHub</a>
-</section>
-
-<!-- زر واتساب -->
-<a class="whatsapp" href="https://wa.me/967782253448?text=مرحبا%20أريد%20التواصل%20معك">
-💬 واتساب
-</a>
-
-<footer>
-    © 2026 موقع أحمد - جميع الحقوق محفوظة
-</footer>
-
-</body>
+  </div>
+</section><section id="contact">
+  <div class="title">تواصل معي</div>
+  <div class="card" style="max-width:500px;margin:auto;">
+    <p>📧 example@gmail.com</p>
+    <p>📱 واتساب: +000000000</p>
+  </div>
+</section><footer>
+  © 2026 جميع الحقوق محفوظة
+</footer></body>
 </html>
