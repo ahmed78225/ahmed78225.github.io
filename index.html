@@ -1,171 +1,197 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>VIP Drive</title>
+<title>نظام الملفات</title>
 
 <style>
 body {
-  font-family: sans-serif;
-  background: linear-gradient(135deg,#111,#333);
-  color: white;
-  text-align: center;
-  padding: 40px;
+  margin:0;
+  font-family: Arial;
+  transition: 0.3s;
 }
 
-.card {
-  background: #222;
-  padding: 15px;
-  margin: 10px auto;
-  width: 90%;
-  max-width: 450px;
-  border-radius: 12px;
-  text-align: right;
+/* الوضع الليلي والنهاري */
+:root {
+  --bg:#0f0f0f;
+  --card:#1e1e1e;
+  --text:white;
+}
+
+.light {
+  --bg:#f2f2f2;
+  --card:white;
+  --text:black;
+}
+
+body {
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* صفحة الدخول */
+#login {
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
 }
 
 button {
-  padding: 10px 15px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
 }
 
-.startBtn {
-  background: #00c853;
-  color: white;
-  font-size: 18px;
+/* زر الدخول */
+#enterBtn {
+  font-size:18px;
 }
 
-.fileBtn {
-  background: #2962ff;
-  color: white;
+/* القائمة */
+#app {
+  display:none;
 }
 
-#uploadBox {
-  display: none;
-  margin-top: 20px;
+/* الهيدر */
+.header {
+  display:flex;
+  justify-content:space-between;
+  padding:10px;
 }
-textarea, input {
-  width: 90%;
-  padding: 8px;
-  margin-top: 5px;
-  border-radius: 8px;
+
+/* قائمة 3 خطوط */
+.menu {
+  position:absolute;
+  top:10px;
+  right:10px;
+  cursor:pointer;
+}
+
+/* القائمة الجانبية */
+.side {
+  position:fixed;
+  right:0;
+  top:0;
+  width:200px;
+  height:100%;
+  background:#333;
+  display:none;
+  padding:10px;
+}
+
+/* الملفات */
+.card {
+  background:var(--card);
+  margin:10px;
+  padding:10px;
+  border-radius:10px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>📁 VIP DRIVE</h1>
-
-<!-- البداية -->
-<div id="home">
-  <button class="startBtn" onclick="openApp()">🚀 ابدأ</button>
+<!-- صفحة الدخول -->
+<div id="login">
+  <button id="enterBtn" onclick="enter()">دخول</button>
 </div>
 
 <!-- التطبيق -->
-<div id="app" style="display:none;">
+<div id="app">
 
-<h2>📂 الملفات</h2>
-
-<!-- كود سري -->
-<input type="password" id="secret" placeholder="كلمة السر">
-<button onclick="check()">دخول الرفع</button>
-
-<!-- رفع -->
-<div id="uploadBox">
-
-  <input type="file" id="file">
-
-  <textarea id="desc" placeholder="اكتب وصف الملف (سطر أو سطرين)"></textarea>
-
-  <button onclick="uploadFile()">رفع الملف</button>
-
+<div class="header">
+  <div onclick="toggleMenu()">☰</div>
+  <div onclick="toggleTheme()">تبديل الوضع</div>
 </div>
 
-<!-- عرض الملفات -->
-<div id="list"></div>
+<!-- القائمة الجانبية (للأدمن) -->
+<div class="side" id="side">
+  <h4>الإعدادات</h4>
+  <input type="password" id="code" placeholder="كلمة السر">
+  <button onclick="check()">تسجيل الدخول</button>
+
+  <div id="admin" style="display:none;">
+    <input type="file" id="file">
+    <input type="text" id="desc" placeholder="وصف الملف">
+    <button onclick="upload()">رفع</button>
+  </div>
+</div>
+
+<!-- الملفات -->
+<div id="files"></div>
 
 </div>
 
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-const supabaseUrl = "https://mvfydfodqyvfdzzapckf.supabase.co";
-const supabaseKey = "sb_publishable_QFwdX1L2pneeEFEqXNpbRw_9vJ71a1e";
+const supabase = createClient(
+"https://mvfydfodqyvfdzzapckf.supabase.co",
+"sb_publishable_QFwdX1L2pneeEFEqXNpbRw_9vJ71a1e"
+);
 
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-// فتح التطبيق
-window.openApp = function () {
-  document.getElementById("home").style.display = "none";
-  document.getElementById("app").style.display = "block";
+// دخول
+window.enter = function(){
+  document.getElementById("login").style.display="none";
+  document.getElementById("app").style.display="block";
   loadFiles();
 };
 
-// كود سري
-window.check = function () {
-  const code = document.getElementById("secret").value;
+// الوضع
+window.toggleTheme = function(){
+  document.body.classList.toggle("light");
+};
 
-  if (code === "12345") {
-    document.getElementById("uploadBox").style.display = "block";
-    alert("تم السماح بالرفع 🔓");
-  } else {
-    alert("كلمة سر خطأ ❌");
+// القائمة
+window.toggleMenu = function(){
+  let s = document.getElementById("side");
+  s.style.display = s.style.display=="block"?"none":"block";
+};
+
+// كود أدمن
+window.check = function(){
+  if(document.getElementById("code").value=="12345"){
+    document.getElementById("admin").style.display="block";
+    alert("تم الدخول للأدمن");
   }
 };
 
-// رفع ملف مع وصف
-window.uploadFile = async function () {
-  const file = document.getElementById("file").files[0];
-  const desc = document.getElementById("desc").value;
+// رفع
+window.upload = async function(){
+  let file = document.getElementById("file").files[0];
+  let desc = document.getElementById("desc").value;
 
-  if (!file) return alert("اختر ملف");
+  let name = Date.now()+"_"+file.name;
 
-  const fileName = Date.now() + "_" + file.name;
+  await supabase.storage.from("files").upload(name,file);
 
-  const { error } = await supabase.storage
-    .from("files")
-    .upload(fileName, file);
-
-  if (error) return alert("فشل الرفع");
-
-  // نحفظ الوصف داخل اسم الملف (حل بسيط بدون DB)
-  localStorage.setItem(fileName, desc);
+  localStorage.setItem(name,desc);
 
   loadFiles();
 };
 
 // عرض الملفات
-async function loadFiles() {
-  const { data } = await supabase.storage.from("files").list();
+async function loadFiles(){
+  let {data}=await supabase.storage.from("files").list();
 
-  const list = document.getElementById("list");
-  list.innerHTML = "";
+  let box=document.getElementById("files");
+  box.innerHTML="";
 
-  data.forEach(file => {
+  data.forEach(f=>{
 
-    const url = supabase.storage.from("files")
-      .getPublicUrl(file.name).data.publicUrl;
+    let url=supabase.storage.from("files").getPublicUrl(f.name).data.publicUrl;
+    let desc=localStorage.getItem(f.name)||"بدون وصف";
 
-    const type = file.name.split('.').pop();
-    const desc = localStorage.getItem(file.name) || "بدون وصف";
-
-    const div = document.createElement("div");
-    div.className = "card";
-
-    div.innerHTML = `
-      📄 ${file.name}<br>
-      🧩 النوع: ${type}<br>
-      📝 ${desc}<br>
-
-      <a href="${url}" download="${file.name}">
-        <button class="fileBtn">🚀 ابدأ التحميل</button>
-      </a>
+    box.innerHTML+=`
+    <div class="card">
+      <b>${f.name}</b><br>
+      <small>${desc}</small><br>
+      <a href="${url}" download>تحميل</a>
+    </div>
     `;
-
-    list.appendChild(div);
   });
 }
 
