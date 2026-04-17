@@ -1,139 +1,66 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>موقعي - رفع الملفات</title>
-
-  <style>
-    body{
-      margin:0;
-      font-family: Arial;
-      background:#0b1220;
-      color:white;
-      text-align:center;
-    }
-
-    header{
-      padding:20px;
-      background:#111a2e;
-      font-size:20px;
-      font-weight:bold;
-    }
-
-    .container{
-      padding:20px;
-    }
-
-    .upload-box{
-      background:#1c2a44;
-      padding:20px;
-      border-radius:10px;
-      margin:20px auto;
-      max-width:400px;
-    }
-
-    input, button{
-      width:100%;
-      padding:10px;
-      margin-top:10px;
-      border:none;
-      border-radius:5px;
-    }
-
-    button{
-      background:#38bdf8;
-      color:black;
-      font-weight:bold;
-      cursor:pointer;
-    }
-
-    .files{
-      margin-top:20px;
-    }
-
-    .file{
-      background:#1c2a44;
-      margin:10px auto;
-      padding:10px;
-      border-radius:8px;
-      max-width:400px;
-    }
-
-    a{
-      color:#38bdf8;
-      text-decoration:none;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>رفع الملفات</title>
 </head>
-
 <body>
 
-<header>
-  📁 نظام رفع الملفات
-</header>
+<h2>📤 رفع ملف</h2>
 
-<div class="container">
+<input type="file" id="file">
+<button onclick="upload()">رفع</button>
 
-  <!-- رفع ملف -->
-  <div class="upload-box">
-    <h3>رفع ملف</h3>
-    <input type="file" id="fileInput">
-    <button onclick="uploadFile()">رفع</button>
-  </div>
+<h3>📄 الملفات</h3>
+<div id="list"></div>
 
-  <!-- عرض الملفات -->
-  <div class="files" id="files"></div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL, listAll } 
+  from "https://www.gstatic.com/firebasejs/12.12.0/firebase-storage.js";
 
-</div>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBuK8yE3rDaS6tLmFweltp7JZqtK1pq2nU",
+    authDomain: "vip-radfan.firebaseapp.com",
+    projectId: "vip-radfan",
+    storageBucket: "vip-radfan.appspot.com",
+    messagingSenderId: "244514768232",
+    appId: "1:244514768232:web:cb3e831608d2785f1e82dd"
+  };
 
-<script>
-const API = "http://85.215.220.246:11081"; 
-// 👆 غير هذا بالرابط حق السيرفر عندك
+  const app = initializeApp(firebaseConfig);
+  const storage = getStorage(app);
 
-// رفع ملف
-async function uploadFile(){
-  const fileInput = document.getElementById("fileInput");
-  const file = fileInput.files[0];
+  // رفع ملف
+  window.upload = async function () {
+    const file = document.getElementById("file").files[0];
+    if (!file) return alert("اختر ملف");
 
-  if(!file){
-    alert("اختر ملف أول");
-    return;
+    const fileRef = ref(storage, file.name);
+    await uploadBytes(fileRef, file);
+
+    const url = await getDownloadURL(fileRef);
+
+    document.getElementById("list").innerHTML += `
+      <p><a href="${url}" target="_blank">⬇ ${file.name}</a></p>
+    `;
   }
 
-  const formData = new FormData();
-  formData.append("file", file);
+  // عرض الملفات
+  async function loadFiles() {
+    const listRef = ref(storage, "/");
+    const res = await listAll(listRef);
 
-  await fetch(API + "/upload", {
-    method: "POST",
-    body: formData
-  });
+    res.items.forEach(async (item) => {
+      const url = await getDownloadURL(item);
 
-  alert("تم الرفع ✅");
+      document.getElementById("list").innerHTML += `
+        <p><a href="${url}" target="_blank">⬇ ${item.name}</a></p>
+      `;
+    });
+  }
+
   loadFiles();
-}
-
-// تحميل الملفات
-async function loadFiles(){
-  const res = await fetch(API + "/files");
-  const data = await res.json();
-
-  const box = document.getElementById("files");
-  box.innerHTML = "";
-
-  data.forEach(f=>{
-    box.innerHTML += `
-      <div class="file">
-        📄 ${f.name} <br>
-        <a href="${API + f.url}" target="_blank">⬇ تحميل</a>
-      </div>
-    `;
-  });
-}
-
-loadFiles();
-setInterval(loadFiles, 5000);
-
 </script>
 
 </body>
