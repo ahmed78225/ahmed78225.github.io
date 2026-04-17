@@ -2,65 +2,58 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>رفع الملفات</title>
+  <title>رفع ملفات</title>
 </head>
 <body>
 
-<h2>📤 رفع ملف</h2>
+<h2>رفع ملفات إلى Supabase</h2>
 
 <input type="file" id="file">
-<button onclick="upload()">رفع</button>
+<button onclick="uploadFile()">رفع الملف</button>
 
-<h3>📄 الملفات</h3>
 <div id="list"></div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL, listAll } 
-  from "https://www.gstatic.com/firebasejs/12.12.0/firebase-storage.js";
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBuK8yE3rDaS6tLmFweltp7JZqtK1pq2nU",
-    authDomain: "vip-radfan.firebaseapp.com",
-    projectId: "vip-radfan",
-    storageBucket: "vip-radfan.appspot.com",
-    messagingSenderId: "244514768232",
-    appId: "1:244514768232:web:cb3e831608d2785f1e82dd"
-  };
+// 🔥 بياناتك (مركبة جاهزة)
+const supabaseUrl = "https://mvfydfodqyvfdzzapckf.supabase.co";
+const supabaseKey = "psb_publishable_QFwdX1L2pneeEFEqXNpbRw_9vJ71a1e";
 
-  const app = initializeApp(firebaseConfig);
-  const storage = getStorage(app);
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-  // رفع ملف
-  window.upload = async function () {
-    const file = document.getElementById("file").files[0];
-    if (!file) return alert("اختر ملف");
+window.uploadFile = async function () {
+  const file = document.getElementById("file").files[0];
+  if (!file) return alert("اختر ملف أولاً");
 
-    const fileRef = ref(storage, file.name);
-    await uploadBytes(fileRef, file);
+  const fileName = Date.now() + "_" + file.name;
 
-    const url = await getDownloadURL(fileRef);
+  // رفع الملف
+  const { data, error } = await supabase
+    .storage
+    .from("files")
+    .upload(fileName, file);
 
-    document.getElementById("list").innerHTML += `
-      <p><a href="${url}" target="_blank">⬇ ${file.name}</a></p>
-    `;
+  if (error) {
+    alert("فشل الرفع ❌");
+    console.log(error);
+    return;
   }
 
-  // عرض الملفات
-  async function loadFiles() {
-    const listRef = ref(storage, "/");
-    const res = await listAll(listRef);
+  // رابط عام
+  const { data: urlData } = supabase
+    .storage
+    .from("files")
+    .getPublicUrl(fileName);
 
-    res.items.forEach(async (item) => {
-      const url = await getDownloadURL(item);
+  const link = document.createElement("a");
+  link.href = urlData.publicUrl;
+  link.target = "_blank";
+  link.textContent = "⬇ تحميل: " + file.name;
 
-      document.getElementById("list").innerHTML += `
-        <p><a href="${url}" target="_blank">⬇ ${item.name}</a></p>
-      `;
-    });
-  }
-
-  loadFiles();
+  document.getElementById("list").appendChild(link);
+  document.getElementById("list").appendChild(document.createElement("br"));
+};
 </script>
 
 </body>
