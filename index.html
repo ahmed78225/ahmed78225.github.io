@@ -2,116 +2,123 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>Ahmed Hacker Drive</title>
+<title>أحمد الردفاني - Drive</title>
 
 <style>
-:root{
-  --bg:#000;
-  --card:#0a0a0a;
-  --text:#00ff88;
-  --accent:#00ff88;
-}
-
 body{
   margin:0;
-  font-family: monospace;
-  background:var(--bg);
-  color:var(--text);
+  font-family: Arial;
+  background:#eef2ff;
+  color:#111;
 }
 
-/* شاشة الدخول */
+/* دخول */
 #login{
   height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
   flex-direction:column;
+  background:linear-gradient(135deg,#2563eb,#1e3a8a);
+  color:white;
 }
 
-h1{
-  letter-spacing:2px;
-  font-size:26px;
-}
-
-/* زر دخول */
-button{
-  background:transparent;
-  border:1px solid var(--accent);
-  color:var(--accent);
-  padding:10px 20px;
+#enterBtn{
+  padding:16px 55px;
+  font-size:18px;
+  border:none;
+  border-radius:14px;
+  background:white;
+  color:#2563eb;
+  font-weight:bold;
   cursor:pointer;
-  margin-top:10px;
 }
 
-button:hover{
-  background:var(--accent);
-  color:black;
-}
-
-/* الهيدر */
+/* هيدر */
 .header{
   text-align:center;
-  padding:20px;
+  padding:25px;
+  background:white;
+  box-shadow:0 3px 12px rgba(0,0,0,0.08);
 }
 
 .title{
-  font-size:30px;
-  text-shadow:0 0 10px var(--accent);
+  font-size:40px;
+  font-weight:bold;
 }
 
-/* قائمة هاكر */
+.sub{
+  color:#666;
+}
+
+/* قائمة */
 .menu{
   position:fixed;
-  top:10px;
-  right:10px;
-  font-size:22px;
+  top:15px;
+  right:15px;
+  font-size:30px;
   cursor:pointer;
 }
 
-/* side panel */
+/* لوحة الأدمن */
 .side{
   position:fixed;
   right:0;
   top:0;
-  width:220px;
+  width:270px;
   height:100%;
-  background:#050505;
-  border-left:1px solid var(--accent);
+  background:#0f172a;
+  color:white;
+  padding:15px;
   display:none;
-  padding:10px;
 }
 
-/* كروت */
+/* ملفات */
 .container{
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:12px;
-  padding:10px;
+  gap:18px;
+  padding:20px;
 }
 
+/* كرت */
 .card{
-  width:90%;
-  max-width:500px;
-  background:var(--card);
-  border:1px solid var(--accent);
-  padding:12px;
+  width:92%;
+  max-width:700px;
+  background:white;
+  padding:22px;
+  border-radius:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
   text-align:center;
 }
 
-/* زر تحميل */
+/* زر تحميل ضخم */
 .download{
   display:block;
-  margin-top:10px;
-  padding:10px;
-  border:1px solid var(--accent);
-  color:var(--accent);
+  margin-top:15px;
+  padding:18px;
+  font-size:18px;
+  background:#2563eb;
+  color:white;
+  border-radius:14px;
   text-decoration:none;
+  font-weight:bold;
 }
 
 .download:hover{
-  background:var(--accent);
-  color:black;
+  background:#1e3a8a;
+}
+
+/* زر حذف */
+.delete{
+  margin-top:10px;
+  padding:10px 15px;
+  background:#ef4444;
+  color:white;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -120,31 +127,32 @@ button:hover{
 
 <!-- دخول -->
 <div id="login">
-  <h1>ACCESS SYSTEM</h1>
-  <button onclick="enter()">ENTER</button>
+  <h1>مرحباً بك في Ahmed Drive</h1>
+  <button id="enterBtn" onclick="enter()">ابدأ</button>
 </div>
 
-<!-- النظام -->
+<!-- التطبيق -->
 <div id="app" style="display:none;">
 
 <div class="menu" onclick="toggle()">☰</div>
 
 <div class="header">
-  <div class="title">AHMED RADFAN SYSTEM</div>
+  <div class="title">أحمد الردفاني</div>
+  <div class="sub">نظام رفع وتحميل الملفات الاحترافي</div>
 </div>
 
-<!-- لوحة الأدمن -->
+<!-- الأدمن -->
 <div class="side" id="side">
 
-<h3>CONTROL PANEL</h3>
+<h3>لوحة التحكم</h3>
 
-<input type="password" id="code" placeholder="ACCESS CODE">
-<button onclick="check()">LOGIN</button>
+<input type="password" id="code" placeholder="كلمة المرور"><br><br>
+<button onclick="check()">دخول</button>
 
-<div id="admin" style="display:none;">
+<div id="admin" style="display:none;margin-top:15px;">
   <input type="file" id="file"><br><br>
-  <input type="text" id="desc" placeholder="FILE DESCRIPTION"><br><br>
-  <button onclick="upload()">UPLOAD</button>
+  <input type="text" id="desc" placeholder="وصف الملف"><br><br>
+  <button onclick="upload()">رفع ملف</button>
 </div>
 
 </div>
@@ -175,10 +183,11 @@ window.toggle=function(){
   s.style.display=s.style.display=="block"?"none":"block";
 };
 
-// كود
+// دخول الأدمن
 window.check=function(){
   if(document.getElementById("code").value=="12345"){
     document.getElementById("admin").style.display="block";
+    alert("تم تسجيل الدخول");
   }
 };
 
@@ -191,32 +200,52 @@ window.upload=async function(){
 
   await supabase.storage.from("files").upload(name,file);
 
-  localStorage.setItem(name,desc);
+  await supabase.from("file_meta").insert([
+    {name:name, desc:desc}
+  ]);
 
   load();
 };
 
-// عرض
+// حذف
+window.removeFile=async function(name){
+  await supabase.storage.from("files").remove([name]);
+  await supabase.from("file_meta").delete().eq("name",name);
+  load();
+};
+
+// عرض الملفات
 async function load(){
-  let {data}=await supabase.storage.from("files").list();
+
+  let {data:files}=await supabase.storage.from("files").list();
+  let {data:meta}=await supabase.from("file_meta").select("*");
 
   let box=document.getElementById("list");
   box.innerHTML="";
 
-  data.forEach(f=>{
+  files.forEach(f=>{
 
     let url=supabase.storage.from("files")
     .getPublicUrl(f.name).data.publicUrl;
 
-    let desc=localStorage.getItem(f.name)||"NO DESCRIPTION";
+    let m=meta?.find(x=>x.name==f.name);
+    let desc=m?m.desc:"لا يوجد وصف";
+
+    let type=f.name.split('.').pop();
 
     box.innerHTML+=`
       <div class="card">
-        <div>${f.name}</div>
-        <small>${desc}</small>
+        <h2>${f.name}</h2>
+        <div>نوع الملف: ${type}</div>
+        <p>${desc}</p>
+
         <a class="download" href="${url}" download>
-          DOWNLOAD
+          ابدأ التحميل
         </a>
+
+        <button class="delete" onclick="removeFile('${f.name}')">
+          حذف (أدمن)
+        </button>
       </div>
     `;
   });
