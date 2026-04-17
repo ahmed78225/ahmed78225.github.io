@@ -168,5 +168,33 @@
   </div>
 </section><footer>
   © 2026 جميع الحقوق محفوظة
-</footer></body>
+</footer>
+
+<div id="list"></div>
+
+<script>
+async function loadFiles(){
+  const res = await fetch('https://YOUR-SERVER.wispbyte.com/files');
+  const data = await res.json();
+
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+
+  data.forEach(f => {
+    const a = document.createElement('a');
+    a.href = f.url;
+    a.innerText = "⬇ تحميل " + f.name;
+    a.style.display = "block";
+    a.style.color = "#38bdf8";
+    a.target = "_blank";
+
+    list.appendChild(a);
+  });
+}
+
+loadFiles();
+setInterval(loadFiles, 5000);
+</script>
+
+</body>
 </html>
