@@ -2,35 +2,25 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>نظام الملفات</title>
+<title>Ahmed Hacker Drive</title>
 
 <style>
-body {
+:root{
+  --bg:#000;
+  --card:#0a0a0a;
+  --text:#00ff88;
+  --accent:#00ff88;
+}
+
+body{
   margin:0;
-  font-family: Arial;
-  transition: 0.3s;
-}
-
-/* الوضع الليلي والنهاري */
-:root {
-  --bg:#0f0f0f;
-  --card:#1e1e1e;
-  --text:white;
-}
-
-.light {
-  --bg:#f2f2f2;
-  --card:white;
-  --text:black;
-}
-
-body {
+  font-family: monospace;
   background:var(--bg);
   color:var(--text);
 }
 
-/* صفحة الدخول */
-#login {
+/* شاشة الدخول */
+#login{
   height:100vh;
   display:flex;
   justify-content:center;
@@ -38,90 +28,129 @@ body {
   flex-direction:column;
 }
 
-button {
+h1{
+  letter-spacing:2px;
+  font-size:26px;
+}
+
+/* زر دخول */
+button{
+  background:transparent;
+  border:1px solid var(--accent);
+  color:var(--accent);
   padding:10px 20px;
-  border:none;
-  border-radius:8px;
   cursor:pointer;
+  margin-top:10px;
 }
 
-/* زر الدخول */
-#enterBtn {
-  font-size:18px;
-}
-
-/* القائمة */
-#app {
-  display:none;
+button:hover{
+  background:var(--accent);
+  color:black;
 }
 
 /* الهيدر */
-.header {
-  display:flex;
-  justify-content:space-between;
-  padding:10px;
+.header{
+  text-align:center;
+  padding:20px;
 }
 
-/* قائمة 3 خطوط */
-.menu {
-  position:absolute;
+.title{
+  font-size:30px;
+  text-shadow:0 0 10px var(--accent);
+}
+
+/* قائمة هاكر */
+.menu{
+  position:fixed;
   top:10px;
   right:10px;
+  font-size:22px;
   cursor:pointer;
 }
 
-/* القائمة الجانبية */
-.side {
+/* side panel */
+.side{
   position:fixed;
   right:0;
   top:0;
-  width:200px;
+  width:220px;
   height:100%;
-  background:#333;
+  background:#050505;
+  border-left:1px solid var(--accent);
   display:none;
   padding:10px;
 }
 
-/* الملفات */
-.card {
-  background:var(--card);
-  margin:10px;
+/* كروت */
+.container{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
   padding:10px;
-  border-radius:10px;
+}
+
+.card{
+  width:90%;
+  max-width:500px;
+  background:var(--card);
+  border:1px solid var(--accent);
+  padding:12px;
+  text-align:center;
+}
+
+/* زر تحميل */
+.download{
+  display:block;
+  margin-top:10px;
+  padding:10px;
+  border:1px solid var(--accent);
+  color:var(--accent);
+  text-decoration:none;
+}
+
+.download:hover{
+  background:var(--accent);
+  color:black;
 }
 </style>
 </head>
 
 <body>
 
-<!-- صفحة الدخول -->
+<!-- دخول -->
 <div id="login">
-  <button id="enterBtn" onclick="enter()">دخول</button>
+  <h1>ACCESS SYSTEM</h1>
+  <button onclick="enter()">ENTER</button>
 </div>
 
-<!-- التطبيق -->
-<div id="app">
+<!-- النظام -->
+<div id="app" style="display:none;">
+
+<div class="menu" onclick="toggle()">☰</div>
 
 <div class="header">
-  <div onclick="toggleMenu()">☰</div>
-  <div onclick="toggleTheme()">تبديل الوضع</div>
+  <div class="title">AHMED RADFAN SYSTEM</div>
 </div>
 
-<!-- القائمة الجانبية (للأدمن) -->
+<!-- لوحة الأدمن -->
 <div class="side" id="side">
-  <h4>الإعدادات</h4>
-  <input type="password" id="code" placeholder="كلمة السر">
-  <button onclick="check()">تسجيل الدخول</button>
 
-  <div id="admin" style="display:none;">
-    <input type="file" id="file">
-    <input type="text" id="desc" placeholder="وصف الملف">
-    <button onclick="upload()">رفع</button>
-  </div>
+<h3>CONTROL PANEL</h3>
+
+<input type="password" id="code" placeholder="ACCESS CODE">
+<button onclick="check()">LOGIN</button>
+
+<div id="admin" style="display:none;">
+  <input type="file" id="file"><br><br>
+  <input type="text" id="desc" placeholder="FILE DESCRIPTION"><br><br>
+  <button onclick="upload()">UPLOAD</button>
+</div>
+
 </div>
 
 <!-- الملفات -->
-<div id="files"></div>
+<div class="container" id="list"></div>
 
 </div>
 
@@ -134,63 +163,61 @@ const supabase = createClient(
 );
 
 // دخول
-window.enter = function(){
+window.enter=function(){
   document.getElementById("login").style.display="none";
   document.getElementById("app").style.display="block";
-  loadFiles();
+  load();
 };
 
-// الوضع
-window.toggleTheme = function(){
-  document.body.classList.toggle("light");
+// قائمة
+window.toggle=function(){
+  let s=document.getElementById("side");
+  s.style.display=s.style.display=="block"?"none":"block";
 };
 
-// القائمة
-window.toggleMenu = function(){
-  let s = document.getElementById("side");
-  s.style.display = s.style.display=="block"?"none":"block";
-};
-
-// كود أدمن
-window.check = function(){
+// كود
+window.check=function(){
   if(document.getElementById("code").value=="12345"){
     document.getElementById("admin").style.display="block";
-    alert("تم الدخول للأدمن");
   }
 };
 
 // رفع
-window.upload = async function(){
-  let file = document.getElementById("file").files[0];
-  let desc = document.getElementById("desc").value;
+window.upload=async function(){
+  let file=document.getElementById("file").files[0];
+  let desc=document.getElementById("desc").value;
 
-  let name = Date.now()+"_"+file.name;
+  let name=Date.now()+"_"+file.name;
 
   await supabase.storage.from("files").upload(name,file);
 
   localStorage.setItem(name,desc);
 
-  loadFiles();
+  load();
 };
 
-// عرض الملفات
-async function loadFiles(){
+// عرض
+async function load(){
   let {data}=await supabase.storage.from("files").list();
 
-  let box=document.getElementById("files");
+  let box=document.getElementById("list");
   box.innerHTML="";
 
   data.forEach(f=>{
 
-    let url=supabase.storage.from("files").getPublicUrl(f.name).data.publicUrl;
-    let desc=localStorage.getItem(f.name)||"بدون وصف";
+    let url=supabase.storage.from("files")
+    .getPublicUrl(f.name).data.publicUrl;
+
+    let desc=localStorage.getItem(f.name)||"NO DESCRIPTION";
 
     box.innerHTML+=`
-    <div class="card">
-      <b>${f.name}</b><br>
-      <small>${desc}</small><br>
-      <a href="${url}" download>تحميل</a>
-    </div>
+      <div class="card">
+        <div>${f.name}</div>
+        <small>${desc}</small>
+        <a class="download" href="${url}" download>
+          DOWNLOAD
+        </a>
+      </div>
     `;
   });
 }
