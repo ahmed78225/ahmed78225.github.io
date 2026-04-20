@@ -2,163 +2,111 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>أحمد الردفاني - Drive</title>
+<title>Ahmed Drive Pro</title>
 
 <style>
-body{
-  margin:0;
-  font-family: Arial;
-  background:#eef2ff;
-  color:#111;
+:root{
+  --bg1:#0f172a;
+  --bg2:#1e3a8a;
+  --bg3:#2563eb;
+  --text:#fff;
+  --card:rgba(255,255,255,0.06);
 }
 
-/* دخول */
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+  color:var(--text);
+}
+
+/* صفحة الدخول */
 #login{
   height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
   flex-direction:column;
-  background:linear-gradient(135deg,#2563eb,#1e3a8a);
-  color:white;
+  gap:10px;
 }
 
-#enterBtn{
-  padding:16px 55px;
-  font-size:18px;
+input{
+  padding:10px;
+  width:250px;
+  border-radius:8px;
   border:none;
-  border-radius:14px;
-  background:white;
-  color:#2563eb;
-  font-weight:bold;
+}
+
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
   cursor:pointer;
 }
 
-/* هيدر */
-.header{
-  text-align:center;
-  padding:25px;
-  background:white;
-  box-shadow:0 3px 12px rgba(0,0,0,0.08);
-}
-
-.title{
-  font-size:40px;
-  font-weight:bold;
-}
-
-.sub{
-  color:#666;
-}
-
-/* قائمة */
-.menu{
-  position:fixed;
-  top:15px;
-  right:15px;
-  font-size:30px;
-  cursor:pointer;
-}
-
-/* لوحة الأدمن */
-.side{
-  position:fixed;
-  right:0;
-  top:0;
-  width:270px;
-  height:100%;
-  background:#0f172a;
-  color:white;
-  padding:15px;
+/* التطبيق */
+#app{
   display:none;
-}
-
-/* ملفات */
-.container{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:18px;
   padding:20px;
 }
 
-/* كرت */
-.card{
-  width:92%;
-  max-width:700px;
-  background:white;
-  padding:22px;
-  border-radius:16px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+/* رفع */
+.upload{
   text-align:center;
+  margin-bottom:20px;
 }
 
-/* زر تحميل ضخم */
+/* ملفات */
+.card{
+  background:white;
+  color:black;
+  padding:15px;
+  margin:10px auto;
+  width:90%;
+  max-width:600px;
+  border-radius:12px;
+}
+
 .download{
   display:block;
-  margin-top:15px;
-  padding:18px;
-  font-size:18px;
+  margin-top:10px;
   background:#2563eb;
   color:white;
-  border-radius:14px;
+  text-align:center;
+  padding:10px;
+  border-radius:8px;
   text-decoration:none;
-  font-weight:bold;
 }
 
-.download:hover{
-  background:#1e3a8a;
-}
-
-/* زر حذف */
 .delete{
   margin-top:10px;
-  padding:10px 15px;
-  background:#ef4444;
+  background:red;
   color:white;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<!-- دخول -->
+<!-- تسجيل -->
 <div id="login">
-  <h1>مرحباً بك في Ahmed Drive</h1>
-  <button id="enterBtn" onclick="enter()">ابدأ</button>
+  <h2>تسجيل الدخول</h2>
+  <input id="email" placeholder="Email">
+  <input id="pass" type="password" placeholder="Password">
+  <button onclick="login()">دخول</button>
 </div>
 
 <!-- التطبيق -->
-<div id="app" style="display:none;">
+<div id="app">
 
-<div class="menu" onclick="toggle()">☰</div>
-
-<div class="header">
-  <div class="title">أحمد الردفاني</div>
-  <div class="sub">نظام رفع وتحميل الملفات الاحترافي</div>
+<div class="upload">
+  <input type="file" id="file">
+  <input type="text" id="desc" placeholder="وصف الملف">
+  <button onclick="upload()">رفع</button>
+  <button onclick="logout()">خروج</button>
 </div>
 
-<!-- الأدمن -->
-<div class="side" id="side">
-
-<h3>لوحة التحكم</h3>
-
-<input type="password" id="code" placeholder="كلمة المرور"><br><br>
-<button onclick="check()">دخول</button>
-
-<div id="admin" style="display:none;margin-top:15px;">
-  <input type="file" id="file"><br><br>
-  <input type="text" id="desc" placeholder="وصف الملف"><br><br>
-  <button onclick="upload()">رفع ملف</button>
-</div>
-
-</div>
-
-<!-- الملفات -->
-<div class="container" id="list"></div>
+<div id="list"></div>
 
 </div>
 
@@ -166,86 +114,117 @@ body{
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 const supabase = createClient(
-"https://mvfydfodqyvfdzzapckf.supabase.co",
-"sb_publishable_QFwdX1L2pneeEFEqXNpbRw_9vJ71a1e"
+  "https://mvfydfodqyvfdzzapckf.supabase.co",
+  "sb_publishable_QFwdX1L2pneeEFEqXNpbRw_9vJ71a1e"
 );
 
-// دخول
-window.enter=function(){
-  document.getElementById("login").style.display="none";
-  document.getElementById("app").style.display="block";
-  load();
-};
+// 👑 أنت الأدمن
+const ADMIN_EMAIL = "ahmed.aa7822@gmail.com";
 
-// قائمة
-window.toggle=function(){
-  let s=document.getElementById("side");
-  s.style.display=s.style.display=="block"?"none":"block";
-};
+let user = null;
 
-// دخول الأدمن
-window.check=function(){
-  if(document.getElementById("code").value=="12345"){
-    document.getElementById("admin").style.display="block";
-    alert("تم تسجيل الدخول");
+/* تسجيل دخول */
+window.login = async function(){
+
+  let email = document.getElementById("email").value;
+  let pass = document.getElementById("pass").value;
+
+  let { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password: pass
+  });
+
+  if(data.user){
+
+    user = data.user;
+
+    // 🔐 منع غير الأدمن
+    if(user.email !== ADMIN_EMAIL){
+      alert("هذا الموقع للأدمن فقط");
+      await supabase.auth.signOut();
+      location.reload();
+      return;
+    }
+
+    document.getElementById("login").style.display="none";
+    document.getElementById("app").style.display="block";
+
+    load();
+
+  } else {
+    alert("خطأ في تسجيل الدخول");
   }
 };
 
-// رفع
-window.upload=async function(){
-  let file=document.getElementById("file").files[0];
-  let desc=document.getElementById("desc").value;
+/* خروج */
+window.logout = async function(){
+  await supabase.auth.signOut();
+  location.reload();
+};
 
-  let name=Date.now()+"_"+file.name;
+/* رفع */
+window.upload = async function(){
 
-  await supabase.storage.from("files").upload(name,file);
+  let file = document.getElementById("file").files[0];
+  let desc = document.getElementById("desc").value;
+
+  if(!file) return alert("اختر ملف");
+
+  let name = Date.now() + "_" + file.name;
+
+  await supabase.storage.from("files").upload(name, file);
 
   await supabase.from("file_meta").insert([
-    {name:name, desc:desc}
+    {
+      name: name,
+      desc: desc,
+      owner: user.id
+    }
   ]);
 
   load();
 };
 
-// حذف
-window.removeFile=async function(name){
+/* حذف (للأدمن فقط) */
+window.removeFile = async function(name){
+
+  if(user.email !== ADMIN_EMAIL) return;
+
   await supabase.storage.from("files").remove([name]);
-  await supabase.from("file_meta").delete().eq("name",name);
+  await supabase.from("file_meta").delete().eq("name", name);
+
   load();
 };
 
-// عرض الملفات
+/* عرض الملفات */
 async function load(){
 
-  let {data:files}=await supabase.storage.from("files").list();
-  let {data:meta}=await supabase.from("file_meta").select("*");
+  let { data: files } = await supabase.storage.from("files").list();
+  let { data: meta } = await supabase.from("file_meta").select("*");
 
-  let box=document.getElementById("list");
-  box.innerHTML="";
+  let box = document.getElementById("list");
+  box.innerHTML = "";
 
-  files.forEach(f=>{
+  files.forEach(f => {
 
-    let url=supabase.storage.from("files")
+    let url = supabase.storage.from("files")
     .getPublicUrl(f.name).data.publicUrl;
 
-    let m=meta?.find(x=>x.name==f.name);
-    let desc=m?m.desc:"لا يوجد وصف";
+    let m = meta?.find(x => x.name === f.name);
 
-    let type=f.name.split('.').pop();
-
-    box.innerHTML+=`
+    box.innerHTML += `
       <div class="card">
-        <h2>${f.name}</h2>
-        <div>نوع الملف: ${type}</div>
-        <p>${desc}</p>
+        <h3>${f.name}</h3>
+        <p>${m ? m.desc : "بدون وصف"}</p>
 
         <a class="download" href="${url}" download>
-          ابدأ التحميل
+          تحميل
         </a>
 
         <button class="delete" onclick="removeFile('${f.name}')">
-          حذف (أدمن)
+          حذف
         </button>
+
       </div>
     `;
   });
