@@ -1,269 +1,63 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>Ahmed Drive Pro</title>
+<title>Project</title>
 
 <style>
 body{
   margin:0;
   font-family:Arial;
-  color:white;
-  background:linear-gradient(-45deg,#0f172a,#1e3a8a,#2563eb,#0ea5e9);
-  background-size:400% 400%;
-  animation:bg 10s infinite;
-}
-
-@keyframes bg{
-  0%{background-position:0 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0 50%}
-}
-
-/* الصفحات */
-.page{
-  display:none;
-  height:100vh;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-}
-.active{display:flex;}
-
-/* زر */
-button{
-  padding:12px 20px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  background:#111827;
-  color:white;
-  margin:5px;
-}
-
-/* ☰ */
-.menu{
-  position:fixed;
-  top:10px;
-  left:10px;
-  font-size:28px;
-  cursor:pointer;
-}
-
-/* لوحة الإعدادات */
-.panel{
-  position:fixed;
-  top:50px;
-  left:10px;
-  background:#111827;
-  padding:10px;
-  border-radius:10px;
-  display:none;
-  width:160px;
-}
-
-/* input */
-input{
-  padding:10px;
-  margin:5px;
-  border:none;
-  border-radius:8px;
-  width:220px;
-}
-
-/* كروت */
-.card{
   background:white;
   color:black;
-  padding:12px;
-  margin:10px;
-  border-radius:12px;
-  width:85%;
-  max-width:500px;
 }
 
-/* تحميل */
-a.download{
+/* صفحات فقط بدون تصميم */
+.page{
+  display:none;
+  padding:20px;
+}
+
+.active{
   display:block;
-  margin-top:8px;
-  background:#2563eb;
-  color:white;
-  text-align:center;
-  padding:8px;
-  border-radius:8px;
-  text-decoration:none;
 }
 
-/* حذف */
-.delete{
-  background:red;
-  color:white;
-  margin-top:5px;
+/* أزرار بسيطة */
+button{
+  padding:10px;
+}
+
+/* مدخلات بسيطة */
+input{
+  padding:8px;
+  margin:5px 0;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ☰ -->
-<div class="menu" onclick="togglePanel()">☰</div>
-
-<!-- الإعدادات -->
-<div class="panel" id="panel">
-  <button onclick="show('login')">آدمن فقط</button>
-</div>
-
-<!-- ترحيب -->
+<!-- صفحة البداية -->
 <div class="page active" id="home">
-  <h1>مرحباً بك في Ahmed Drive 🚀</h1>
-  <button onclick="show('files')">ابدأ الدخول</button>
 </div>
 
-<!-- الملفات (للزوار) -->
+<!-- صفحة الملفات -->
 <div class="page" id="files">
-  <h2>الملفات</h2>
-  <div id="list"></div>
 </div>
 
 <!-- تسجيل -->
 <div class="page" id="login">
-  <h2>تسجيل دخول الأدمن</h2>
-  <input id="email" placeholder="Email">
-  <input id="pass" type="password" placeholder="Password">
-  <button onclick="login()">دخول</button>
 </div>
 
 <!-- رفع -->
 <div class="page" id="upload">
-  <h2>لوحة الأدمن</h2>
-
-  <input type="file" id="file">
-  <input id="desc" placeholder="وصف الملف">
-  <button onclick="upload()">رفع الملف</button>
-
-  <div id="adminList"></div>
 </div>
 
-<script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-
-const supabase = createClient(
-  "https://mvfydfodqyvfdzzapckf.supabase.co",
-  "sb_publishable_QFwdX1L2pneeEFEqXNpbRw_9vJ71a1e"
-);
-
-const ADMIN_EMAIL = "ahmed.aa7822@gmail.com";
-let user=null;
-
-/* تنقل */
-window.show=function(p){
-  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
-  document.getElementById(p).classList.add("active");
+<script>
+function show(page){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(page).classList.add("active");
 }
-
-/* ☰ */
-window.togglePanel=function(){
-  let p=document.getElementById("panel");
-  p.style.display = p.style.display==="block"?"none":"block";
-}
-
-/* تسجيل */
-window.login=async function(){
-  let email=document.getElementById("email").value;
-  let pass=document.getElementById("pass").value;
-
-  let {data}=await supabase.auth.signInWithPassword({
-    email,
-    password:pass
-  });
-
-  if(data.user){
-
-    user=data.user;
-
-    if(user.email!==ADMIN_EMAIL){
-      alert("آدمن فقط");
-      await supabase.auth.signOut();
-      return;
-    }
-
-    show("upload");
-
-  }else{
-    alert("خطأ في الدخول");
-  }
-}
-
-/* رفع */
-window.upload=async function(){
-
-  let file=document.getElementById("file").files[0];
-  let desc=document.getElementById("desc").value;
-
-  if(!file) return alert("اختر ملف");
-
-  let name=Date.now()+"_"+file.name;
-
-  alert("جاري الرفع... ⏳");
-
-  await supabase.storage.from("files").upload(name,file);
-
-  await supabase.from("file_meta").insert([{
-    name,
-    desc,
-    owner:user.id
-  }]);
-
-  alert("تم الرفع ✔");
-
-  load();
-}
-
-/* حذف */
-window.removeFile=async function(name){
-  if(user.email!==ADMIN_EMAIL) return;
-
-  await supabase.storage.from("files").remove([name]);
-  await supabase.from("file_meta").delete().eq("name",name);
-
-  load();
-}
-
-/* عرض */
-async function load(){
-
-  let {data:files}=await supabase.storage.from("files").list();
-  let {data:meta}=await supabase.from("file_meta").select("*");
-
-  let box=document.getElementById("list");
-  box.innerHTML="";
-
-  files.forEach(f=>{
-
-    let url=supabase.storage.from("files")
-    .getPublicUrl(f.name).data.publicUrl;
-
-    let m=meta?.find(x=>x.name==f.name);
-
-    box.innerHTML+=`
-      <div class="card">
-        <h3>${f.name}</h3>
-        <p>${m?m.desc:"بدون وصف"}</p>
-
-        <a class="download" href="${url}" download>
-          تحميل
-        </a>
-
-        ${user && user.email===ADMIN_EMAIL ? `
-        <button class="delete" onclick="removeFile('${f.name}')">
-          حذف
-        </button>` : ""}
-      </div>
-    `;
-  });
-}
-
-load();
 </script>
 
 </body>
