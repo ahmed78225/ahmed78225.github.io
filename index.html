@@ -8,8 +8,16 @@
 body{
   margin:0;
   font-family:Arial;
-  background:#0f172a;
   color:white;
+  background:linear-gradient(-45deg,#0f172a,#1e3a8a,#2563eb,#0ea5e9);
+  background-size:400% 400%;
+  animation:bg 10s infinite;
+}
+
+@keyframes bg{
+  0%{background-position:0 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0 50%}
 }
 
 /* الصفحات */
@@ -20,15 +28,17 @@ body{
   align-items:center;
   flex-direction:column;
 }
-
 .active{display:flex;}
 
 /* زر */
 button{
   padding:12px 20px;
   border:none;
-  border-radius:8px;
+  border-radius:10px;
   cursor:pointer;
+  background:#111827;
+  color:white;
+  margin:5px;
 }
 
 /* ☰ */
@@ -40,7 +50,7 @@ button{
   cursor:pointer;
 }
 
-/* نافذة الإعدادات */
+/* لوحة الإعدادات */
 .panel{
   position:fixed;
   top:50px;
@@ -49,30 +59,46 @@ button{
   padding:10px;
   border-radius:10px;
   display:none;
-  width:150px;
+  width:160px;
 }
 
-.panel button{
-  width:100%;
-  margin:5px 0;
-  background:#2563eb;
-  color:white;
-}
-
-/* تسجيل */
+/* input */
 input{
   padding:10px;
   margin:5px;
-  width:200px;
+  border:none;
+  border-radius:8px;
+  width:220px;
 }
 
-/* ملفات */
+/* كروت */
 .card{
   background:white;
   color:black;
-  padding:10px;
+  padding:12px;
   margin:10px;
-  border-radius:10px;
+  border-radius:12px;
+  width:85%;
+  max-width:500px;
+}
+
+/* تحميل */
+a.download{
+  display:block;
+  margin-top:8px;
+  background:#2563eb;
+  color:white;
+  text-align:center;
+  padding:8px;
+  border-radius:8px;
+  text-decoration:none;
+}
+
+/* حذف */
+.delete{
+  background:red;
+  color:white;
+  margin-top:5px;
 }
 </style>
 </head>
@@ -82,24 +108,24 @@ input{
 <!-- ☰ -->
 <div class="menu" onclick="togglePanel()">☰</div>
 
-<!-- إعدادات -->
+<!-- الإعدادات -->
 <div class="panel" id="panel">
   <button onclick="show('login')">آدمن فقط</button>
 </div>
 
-<!-- الصفحة 1 -->
+<!-- ترحيب -->
 <div class="page active" id="home">
-  <h1>مرحباً بك 👋</h1>
-  <button onclick="show('files')">ابدأ</button>
+  <h1>مرحباً بك في Ahmed Drive 🚀</h1>
+  <button onclick="show('files')">ابدأ الدخول</button>
 </div>
 
-<!-- الصفحة 2 (الملفات للزوار) -->
+<!-- الملفات (للزوار) -->
 <div class="page" id="files">
   <h2>الملفات</h2>
   <div id="list"></div>
 </div>
 
-<!-- الصفحة 3 تسجيل الدخول -->
+<!-- تسجيل -->
 <div class="page" id="login">
   <h2>تسجيل دخول الأدمن</h2>
   <input id="email" placeholder="Email">
@@ -107,13 +133,13 @@ input{
   <button onclick="login()">دخول</button>
 </div>
 
-<!-- الصفحة 4 الرفع -->
+<!-- رفع -->
 <div class="page" id="upload">
   <h2>لوحة الأدمن</h2>
 
   <input type="file" id="file">
-  <input id="desc" placeholder="وصف">
-  <button onclick="upload()">رفع</button>
+  <input id="desc" placeholder="وصف الملف">
+  <button onclick="upload()">رفع الملف</button>
 
   <div id="adminList"></div>
 </div>
@@ -129,20 +155,20 @@ const supabase = createClient(
 const ADMIN_EMAIL = "ahmed.aa7822@gmail.com";
 let user=null;
 
-/* تنقل الصفحات */
-window.show = function(p){
+/* تنقل */
+window.show=function(p){
   document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
   document.getElementById(p).classList.add("active");
 }
 
 /* ☰ */
-window.togglePanel = function(){
+window.togglePanel=function(){
   let p=document.getElementById("panel");
-  p.style.display = (p.style.display==="block")?"none":"block";
+  p.style.display = p.style.display==="block"?"none":"block";
 }
 
-/* تسجيل دخول */
-window.login = async function(){
+/* تسجيل */
+window.login=async function(){
   let email=document.getElementById("email").value;
   let pass=document.getElementById("pass").value;
 
@@ -164,17 +190,21 @@ window.login = async function(){
     show("upload");
 
   }else{
-    alert("خطأ");
+    alert("خطأ في الدخول");
   }
-};
+}
 
 /* رفع */
-window.upload = async function(){
+window.upload=async function(){
 
   let file=document.getElementById("file").files[0];
   let desc=document.getElementById("desc").value;
 
+  if(!file) return alert("اختر ملف");
+
   let name=Date.now()+"_"+file.name;
+
+  alert("جاري الرفع... ⏳");
 
   await supabase.storage.from("files").upload(name,file);
 
@@ -184,10 +214,22 @@ window.upload = async function(){
     owner:user.id
   }]);
 
-  load();
-};
+  alert("تم الرفع ✔");
 
-/* عرض للزوار */
+  load();
+}
+
+/* حذف */
+window.removeFile=async function(name){
+  if(user.email!==ADMIN_EMAIL) return;
+
+  await supabase.storage.from("files").remove([name]);
+  await supabase.from("file_meta").delete().eq("name",name);
+
+  load();
+}
+
+/* عرض */
 async function load(){
 
   let {data:files}=await supabase.storage.from("files").list();
@@ -197,14 +239,25 @@ async function load(){
   box.innerHTML="";
 
   files.forEach(f=>{
-    let url=supabase.storage.from("files").getPublicUrl(f.name).data.publicUrl;
+
+    let url=supabase.storage.from("files")
+    .getPublicUrl(f.name).data.publicUrl;
+
     let m=meta?.find(x=>x.name==f.name);
 
     box.innerHTML+=`
       <div class="card">
         <h3>${f.name}</h3>
-        <p>${m?m.desc:""}</p>
-        <a href="${url}" download>تحميل</a>
+        <p>${m?m.desc:"بدون وصف"}</p>
+
+        <a class="download" href="${url}" download>
+          تحميل
+        </a>
+
+        ${user && user.email===ADMIN_EMAIL ? `
+        <button class="delete" onclick="removeFile('${f.name}')">
+          حذف
+        </button>` : ""}
       </div>
     `;
   });
