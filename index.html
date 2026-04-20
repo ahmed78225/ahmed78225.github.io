@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>Ahmed Drive</title>
+<title>Ahmed Drive Pro</title>
 
 <style>
 body{
@@ -21,64 +21,56 @@ body{
   flex-direction:column;
 }
 
-.active{
-  display:flex;
-}
+.active{display:flex;}
 
-/* زر البداية */
-.big-btn{
-  padding:20px 40px;
-  font-size:20px;
-  background:#2563eb;
-  color:white;
+/* زر */
+button{
+  padding:12px 20px;
   border:none;
-  border-radius:10px;
+  border-radius:8px;
   cursor:pointer;
 }
 
-/* القائمة الثلاثية */
+/* ☰ */
 .menu{
   position:fixed;
   top:10px;
-  right:10px;
-  font-size:30px;
+  left:10px;
+  font-size:28px;
   cursor:pointer;
 }
 
-/* نافذة جانبية */
-.side{
+/* نافذة الإعدادات */
+.panel{
   position:fixed;
-  top:0;
-  right:-250px;
-  width:200px;
-  height:100%;
+  top:50px;
+  left:10px;
   background:#111827;
-  padding:20px;
-  transition:0.3s;
-}
-
-.side.show{
-  right:0;
-}
-
-.side button{
-  width:100%;
-  margin:10px 0;
   padding:10px;
-  cursor:pointer;
+  border-radius:10px;
+  display:none;
+  width:150px;
 }
 
-/* تسجيل دخول */
+.panel button{
+  width:100%;
+  margin:5px 0;
+  background:#2563eb;
+  color:white;
+}
+
+/* تسجيل */
 input{
   padding:10px;
   margin:5px;
+  width:200px;
 }
 
-/* رفع */
+/* ملفات */
 .card{
   background:white;
   color:black;
-  padding:15px;
+  padding:10px;
   margin:10px;
   border-radius:10px;
 }
@@ -88,37 +80,42 @@ input{
 <body>
 
 <!-- ☰ -->
-<div class="menu" onclick="toggleMenu()">☰</div>
+<div class="menu" onclick="togglePanel()">☰</div>
 
-<!-- نافذة جانبية -->
-<div class="side" id="side">
-  <h3>آدمن فقط</h3>
-  <button onclick="show('login')">تسجيل الدخول</button>
-  <button onclick="show('upload')">الرفع</button>
+<!-- إعدادات -->
+<div class="panel" id="panel">
+  <button onclick="show('login')">آدمن فقط</button>
 </div>
 
-<!-- صفحة 1 -->
+<!-- الصفحة 1 -->
 <div class="page active" id="home">
-  <h1>مرحباً بك في الموقع</h1>
-  <button class="big-btn" onclick="show('login')">ابدأ الدخول</button>
+  <h1>مرحباً بك 👋</h1>
+  <button onclick="show('files')">ابدأ</button>
 </div>
 
-<!-- صفحة 2 تسجيل -->
+<!-- الصفحة 2 (الملفات للزوار) -->
+<div class="page" id="files">
+  <h2>الملفات</h2>
+  <div id="list"></div>
+</div>
+
+<!-- الصفحة 3 تسجيل الدخول -->
 <div class="page" id="login">
-  <h2>تسجيل الدخول</h2>
+  <h2>تسجيل دخول الأدمن</h2>
   <input id="email" placeholder="Email">
   <input id="pass" type="password" placeholder="Password">
   <button onclick="login()">دخول</button>
 </div>
 
-<!-- صفحة 3 رفع -->
+<!-- الصفحة 4 الرفع -->
 <div class="page" id="upload">
-  <h2>رفع الملفات</h2>
+  <h2>لوحة الأدمن</h2>
+
   <input type="file" id="file">
   <input id="desc" placeholder="وصف">
   <button onclick="upload()">رفع</button>
 
-  <div id="list"></div>
+  <div id="adminList"></div>
 </div>
 
 <script type="module">
@@ -133,17 +130,18 @@ const ADMIN_EMAIL = "ahmed.aa7822@gmail.com";
 let user=null;
 
 /* تنقل الصفحات */
-window.show = function(page){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(page).classList.add("active");
-};
+window.show = function(p){
+  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+  document.getElementById(p).classList.add("active");
+}
 
-/* القائمة */
-window.toggleMenu = function(){
-  document.getElementById("side").classList.toggle("show");
-};
+/* ☰ */
+window.togglePanel = function(){
+  let p=document.getElementById("panel");
+  p.style.display = (p.style.display==="block")?"none":"block";
+}
 
-/* تسجيل */
+/* تسجيل دخول */
 window.login = async function(){
   let email=document.getElementById("email").value;
   let pass=document.getElementById("pass").value;
@@ -164,13 +162,15 @@ window.login = async function(){
     }
 
     show("upload");
-  } else {
+
+  }else{
     alert("خطأ");
   }
 };
 
 /* رفع */
 window.upload = async function(){
+
   let file=document.getElementById("file").files[0];
   let desc=document.getElementById("desc").value;
 
@@ -187,8 +187,9 @@ window.upload = async function(){
   load();
 };
 
-/* عرض */
+/* عرض للزوار */
 async function load(){
+
   let {data:files}=await supabase.storage.from("files").list();
   let {data:meta}=await supabase.from("file_meta").select("*");
 
@@ -197,7 +198,6 @@ async function load(){
 
   files.forEach(f=>{
     let url=supabase.storage.from("files").getPublicUrl(f.name).data.publicUrl;
-
     let m=meta?.find(x=>x.name==f.name);
 
     box.innerHTML+=`
@@ -209,6 +209,8 @@ async function load(){
     `;
   });
 }
+
+load();
 </script>
 
 </body>
