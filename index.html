@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Project</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:white;
+  color:black;
+}
+
+/* صفحات فقط بدون تصميم */
+.page{
+  display:none;
+  padding:20px;
+}
+
+.active{
+  display:block;
+}
+
+/* أزرار بسيطة */
+button{
+  padding:10px;
+}
+
+/* مدخلات بسيطة */
+input{
+  padding:8px;
+  margin:5px 0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- صفحة البداية -->
+<div class="page active" id="home">
+</div>
+
+<!-- صفحة الملفات -->
+<div class="page" id="files">
+</div>
+
+<!-- تسجيل -->
+<div class="page" id="login">
+</div>
+
+<!-- رفع -->
+<div class="page" id="upload">
+</div>
+
+<script>
+function show(page){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(page).classList.add("active");
+}
+</script>
+
+</body>
+</html>
